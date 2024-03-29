@@ -1,0 +1,66 @@
+
+```{julia}
+a = [1, 2, 3, 4]
+mean(a)
+b = [5, 6, 7, 8]
+
+#multiplication point by point for corresponding terms
+a.*b 
+
+#addition
+a.+b 
+
+# sum of multiplication ("dot product")
+dot_product = sum(a.*b) 
+```
+
+```{julia}
+# if function/conditional statement
+if dot_product >= 10
+    print("Hello, World!")
+elseif dot_product <= 10
+    print("Goodbye, World!")
+end
+```
+
+```{julia}
+# for loop
+# for i in b
+#     print(i)
+# end
+
+# for i in a
+#     print(i*4)
+# end
+
+# for i in 1:length(b)
+#     print(b[i])
+# end
+
+# print(b[1])
+
+for i in 1:length(a)
+    print(a[i].*b[i])
+end
+```
+
+```{julia}
+using Distributions
+
+function surge(water)
+    random = rand(Normal(0.0, 1.0))*water
+    return random
+end
+
+# for i in 1:10
+#     print(surge())
+# end
+
+[surge(water) for water in 3:10]
+# [surge(water) for water in 3:10]
+
+# for water in 1:length(3:10)
+#     print(water)
+#     print(" ")
+# end
+```
