@@ -26,13 +26,6 @@ format:
 date-format: "ddd., MMM. D"
 references: references.bib
 ---
-```{julia} 
-N_SOW = 10
-ParkingGarageSOW(; demand_growth_rate=rand()*100, n_years=20, discount_rate=0.12)
-
-[surge(water) for water in 3:10]
-[ParkingGarageSOW(; demand_growth_rate=rand()*100, n_years=20, discount_rate=0.12) for _ in 1:N_SOW]
-```
 
 ```{julia}
 using Revise
@@ -50,15 +43,15 @@ Plots.default(; margin=5Plots.mm)
 
 # Uncertainty
 1. Generate an ensemble of SOWs. Justify how you are sampling the three parameters (n_years, demand_growth_rate, and discount_rate). I suggest to keep n_years as a constant, and perhaps to keep the discount rate constant as well.
+
+Both the number of years and the discount rate as constants, however I chose to draw random the demand growth rate 
 ```{julia} 
-# sow = ParkingGarageSOW(; demand_growth_rate=rand()*100, n_years=20, discount_rate=0.12)
+sow = ParkingGarageSOW(; demand_growth_rate=rand()*100, n_years=20, discount_rate=0.12)
 N_SOW = 10000
 sows = [
     ParkingGarageSOW(; demand_growth_rate=rand()*100, n_years=20, discount_rate=0.12) for
     _ in 1:N_SOW
 ] # for 100 SOWs
-
-sows[1]).n_year
 ```
 
 2. For each SOW, calculate the NPV for each policy.
@@ -97,14 +90,10 @@ The static case sheds some light on decision making under uncertainty. However, 
 
 To implement this, you’ll need to get your hands a bit dirty with the source code. Specifically, you need to edit the function get_action(x::ParkingGarageState, policy::AdaptivePolicy) function in ParkingGarage/src/sim.jl. You’ll need to use if...else...end statements to implement the adaptive policy. We’ll talk about this in class!
 
+Once you’ve implemented this function, you can simulate the adaptive policy and compare the NPV to the static policy. Compare the fixed and adaptive policies for both the deterministic (single SOW) and stochastic (ensemble of SOWs) cases. Plot the NPV as a function of the number of levels for each case.
 ```{julia}
-x = ParkingGarageState(5, 2024)
+# x = ParkingGarageState(5, 2024)
 # policy = AdaptivePolicy(2)
 # get_action(x, policy, 1.2)
 # ParkingGarage.calculate_capacity(x)
-
-# ParkingGarage.calculate_capacity( )
-
 ```
-
-Once you’ve implemented this function, you can simulate the adaptive policy and compare the NPV to the static policy. Compare the fixed and adaptive policies for both the deterministic (single SOW) and stochastic (ensemble of SOWs) cases. Plot the NPV as a function of the number of levels for each case.
