@@ -92,8 +92,7 @@ To implement this, you’ll need to get your hands a bit dirty with the source c
 
 Once you’ve implemented this function, you can simulate the adaptive policy and compare the NPV to the static policy. Compare the fixed and adaptive policies for both the deterministic (single SOW) and stochastic (ensemble of SOWs) cases. Plot the NPV as a function of the number of levels for each case.
 ```{julia}
-# x = ParkingGarageState(5, 2024)
-# policy = AdaptivePolicy(2)
-# get_action(x, policy, 1.2)
-# ParkingGarage.calculate_capacity(x)
+x = ParkingGarage.ParkingGarageState(5, 2024)
+policy = ParkingGarage.StaticPolicy(2)
+ParkingGarage.get_action(x, policy)
 ```
