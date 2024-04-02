@@ -7,16 +7,6 @@ categories: [Lab]
 
 format: 
     html: default
-
-    # YOU DO NOT NEED BOTH PDF AND DOCX.
-    # COMMENT OR DELETE THE ONE YOU DON'T WANT TO USE.
-    #pdf:
-    #    documentclass: article
-    #    fontsize: 11pt
-    #    geometry:
-    #        - margin=1in  
-    #    number-sections: true
-    #    code-line-numbers: true
     docx: 
         toc: true
         fig-format: png
@@ -46,12 +36,21 @@ Plots.default(; margin=5Plots.mm)
 
 Both the number of years and the discount rate as constants, however I chose to draw random the demand growth rate 
 ```{julia} 
-sow = ParkingGarageSOW(; demand_growth_rate=rand()*100, n_years=20, discount_rate=0.12)
+discount_rate = 0.05
+n_years = 20
 N_SOW = 10000
+
+function random_demand_growth_rate()
+    return rand() * 100
+end
+
 sows = [
-    ParkingGarageSOW(; demand_growth_rate=rand()*100, n_years=20, discount_rate=0.12) for
-    _ in 1:N_SOW
-] # for 100 SOWs
+    ParkingGarageSOW(;
+        demand_growth_rate=random_demand_growth_rate(),
+        n_years=n_years,
+        discount_rate=discount_rate,
+    ) for _ in 1:N_SOW
+]
 ```
 
 2. For each SOW, calculate the NPV for each policy.
@@ -76,7 +75,7 @@ let
         ylabel="NPV Profits [Million USD]",
         xlabel="Number of levels",
         legend=false,
-        title="20 Year Horizon, 0.12 Discount, Varying Demand Growth",
+        title="$n_years Year Horizon, $(round(discount_rate*100, digits=1))% Discount, Varying Demand Growth",
         size=(800, 400),
         marker=:circle,
         xticks=n_levels,
@@ -91,8 +90,31 @@ The static case sheds some light on decision making under uncertainty. However, 
 To implement this, you’ll need to get your hands a bit dirty with the source code. Specifically, you need to edit the function get_action(x::ParkingGarageState, policy::AdaptivePolicy) function in ParkingGarage/src/sim.jl. You’ll need to use if...else...end statements to implement the adaptive policy. We’ll talk about this in class!
 
 Once you’ve implemented this function, you can simulate the adaptive policy and compare the NPV to the static policy. Compare the fixed and adaptive policies for both the deterministic (single SOW) and stochastic (ensemble of SOWs) cases. Plot the NPV as a function of the number of levels for each case.
+
 ```{julia}
 x = ParkingGarage.ParkingGarageState(5, 2024)
 policy = ParkingGarage.StaticPolicy(2)
 ParkingGarage.get_action(x, policy)
+```
+
+```{julia}
+adaptive_policies = [AdaptivePolicy(i) for i in n_levels]
+adaptive_npv = [npv_average(sows, policy) for policy in adaptive_policies]
+```
+
+```{julia}
+let
+    plot(
+        n_levels,
+        adaptive_npv;
+        ylabel="NPV Profits [Million USD]",
+        xlabel="Number of levels",
+        legend=false,
+        title="$n_years Year Horizon, $(round(discount_rate*100, digits=1))% Discount, Varying Demand Growth",
+        size=(800, 400),
+        marker=:circle,
+        xticks=n_levels,
+    )
+    hline!([0])
+end
 ```
